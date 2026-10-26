@@ -1,0 +1,29 @@
+<UserControl x:Class="ThodMonitor.Views.AlertCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:v="clr-namespace:ThodMonitor.Visuals"
+             Foreground="{StaticResource Text}" FontFamily="Segoe UI Variable Display, Segoe UI">
+  <Border x:Name="RootBorder" Width="340" CornerRadius="20" Padding="16" ClipToBounds="True"
+          Background="#F2151820" BorderBrush="#40FFFFFF" BorderThickness="1">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <v:RingGauge Width="88" Height="88" Thickness="9" Icon="{Binding IconName}"
+                   Value="{Binding RingValue}" IsAvailable="True" Text="{Binding RingText}"
+                   Warn="{Binding Warn}" Crit="{Binding Crit}" Mode="Traffic"/>
+      <StackPanel x:Name="TextPart" Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
+        <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"/>
+        <TextBlock Text="{Binding Subtitle}" FontSize="12" Foreground="{StaticResource TextDim}" TextWrapping="Wrap" Margin="0,3,0,0"/>
+        <ItemsControl ItemsSource="{Binding Lines}" Margin="0,8,0,0" Visibility="{Binding LinesVisibility}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding}" FontSize="12" Foreground="#C9D0DE" Margin="0,1" TextTrimming="CharacterEllipsis"/>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>

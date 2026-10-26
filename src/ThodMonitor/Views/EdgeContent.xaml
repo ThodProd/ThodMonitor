@@ -1,0 +1,5 @@
+<UserControl x:Class="ThodMonitor.Views.EdgeContent" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:v="clr-namespace:ThodMonitor.Visuals" xmlns:views="clr-namespace:ThodMonitor.Views" Foreground="{StaticResource Text}" FontFamily="Segoe UI Variable Display, Segoe UI">
+  <ItemsControl x:Name="Items" ItemsSource="{Binding EdgeBlocks}">
+    <ItemsControl.ItemTemplate><DataTemplate><views:EdgeBlockView/></DataTemplate></ItemsControl.ItemTemplate>
+  </ItemsControl>
+</UserControl>

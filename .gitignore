@@ -1,0 +1,13 @@
+bin/
+obj/
+publish/
+.vs/
+*.user
+
+artifacts/
+.venv/
+.env
+*.user
+
+
+.hub-sdk/

@@ -1,0 +1,64 @@
+<UserControl x:Class="ThodMonitor.Views.Widgets.FpsWidget" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:v="clr-namespace:ThodMonitor.Visuals" TextOptions.TextFormattingMode="Ideal" Typography.NumeralAlignment="Tabular" Foreground="{StaticResource Text}" FontFamily="{DynamicResource ValueFont}">
+  <UserControl.Resources>
+    <DropShadowEffect x:Key="Soft" BlurRadius="5" ShadowDepth="0" Opacity="0.95" Color="Black"/>
+  </UserControl.Resources>
+  <Grid>
+    <!-- 1. Только цифры -->
+    <TextBlock Visibility="{Binding CfgFps.Variant, Converter={StaticResource Eq}, ConverterParameter=Number}" Text="{Binding FpsMain.ValueText}" FontSize="30" FontWeight="{DynamicResource ValueWeight}" Foreground="{Binding FpsBrush}" Effect="{StaticResource Soft}"/>
+
+    <!-- 2. Цифры + подпись -->
+    <StackPanel Orientation="Horizontal" Visibility="{Binding CfgFps.Variant, Converter={StaticResource Eq}, ConverterParameter=NumberLabel}">
+      <TextBlock Text="{Binding FpsMain.ValueText}" FontSize="30" FontWeight="{DynamicResource ValueWeight}" Foreground="{Binding FpsBrush}" Effect="{StaticResource Soft}"/>
+      <TextBlock Text="{Binding FpsMainLabel}" FontSize="11" FontWeight="{DynamicResource ValueWeight}" Foreground="{StaticResource TextDim}" VerticalAlignment="Bottom" Margin="4,0,0,5" Effect="{StaticResource Soft}"/>
+    </StackPanel>
+
+    <!-- 3. Компактная -->
+    <StackPanel Orientation="Horizontal" Visibility="{Binding CfgFps.Variant, Converter={StaticResource Eq}, ConverterParameter=Compact}">
+      <v:IconView Icon="fps" Width="18" Height="18" VerticalAlignment="Center" Stroke="{Binding FpsBrush}"/>
+      <TextBlock Text="{Binding FpsMain.ValueText}" FontSize="24" FontWeight="{DynamicResource ValueWeight}" Foreground="{Binding FpsBrush}" Margin="6,0,0,0" Effect="{StaticResource Soft}"/>
+      <TextBlock Text="{Binding FpsMainLabel}" FontSize="10" FontWeight="{DynamicResource ValueWeight}" Foreground="{StaticResource TextDim}" VerticalAlignment="Bottom" Margin="3,0,0,4"/>
+    </StackPanel>
+
+    <!-- 4. Строка -->
+    <StackPanel Orientation="Horizontal" Visibility="{Binding CfgFps.Variant, Converter={StaticResource Eq}, ConverterParameter=Line}">
+      <TextBlock Text="{Binding FpsMain.ValueText}" FontSize="20" FontWeight="{DynamicResource ValueWeight}" Foreground="{Binding FpsBrush}" Effect="{StaticResource Soft}" VerticalAlignment="Center"/>
+      <TextBlock Text="{Binding FpsMainLabel}" FontSize="11" Foreground="{StaticResource TextDim}" Margin="4,0,0,0" VerticalAlignment="Center"/>
+      <TextBlock Text="·" FontSize="14" Foreground="{StaticResource TextDim}" Margin="8,0,8,0" VerticalAlignment="Center"/>
+      <TextBlock Text="1%" FontSize="11" Foreground="{StaticResource TextDim}" VerticalAlignment="Center"/>
+      <TextBlock Text="{Binding FpsLow.ValueText}" FontSize="14" FontWeight="{DynamicResource ValueWeight}" Foreground="{Binding FpsLow.StateBrush}" Margin="4,0,0,0" VerticalAlignment="Center"/>
+      <TextBlock Text="·" FontSize="14" Foreground="{StaticResource TextDim}" Margin="8,0,8,0" VerticalAlignment="Center"/>
+      <TextBlock Text="{Binding FpsSecond.ValueText}" FontSize="14" VerticalAlignment="Center"/>
+      <TextBlock Text="{Binding FpsSecondLabel}" FontSize="10" Foreground="{StaticResource TextDim}" Margin="2,0,0,0" VerticalAlignment="Center"/>
+    </StackPanel>
+
+    <!-- 5. Полная -->
+    <StackPanel Visibility="{Binding CfgFps.Variant, Converter={StaticResource Eq}, ConverterParameter=Full}">
+      <StackPanel Orientation="Horizontal" MinHeight="64">
+        <v:IconView Icon="fps" Width="26" Height="26" VerticalAlignment="Center" Stroke="{Binding FpsBrush}"/>
+        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+          <TextBlock Text="{Binding FpsMain.ValueText}" FontSize="44" FontWeight="{DynamicResource ValueWeight}" Foreground="{Binding FpsBrush}" MinWidth="64" TextAlignment="Right"/>
+          <TextBlock Text="{Binding FpsMainLabel}" FontSize="13" FontWeight="{DynamicResource ValueWeight}" Foreground="{StaticResource TextDim}" VerticalAlignment="Bottom" Margin="5,0,0,9"/>
+        </StackPanel>
+        <StackPanel Margin="14,0,2,0" VerticalAlignment="Center" MinWidth="86">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="1% Low" FontSize="11" Foreground="{StaticResource TextDim}" Width="46" VerticalAlignment="Bottom"/>
+            <TextBlock Text="{Binding FpsLow.ValueText}" FontSize="15" FontWeight="{DynamicResource ValueWeight}" Foreground="{Binding FpsLow.StateBrush}"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+            <TextBlock Text="{Binding FpsSecondLabel}" FontSize="11" Foreground="{StaticResource TextDim}" Width="46" VerticalAlignment="Bottom"/>
+            <TextBlock Text="{Binding FpsSecond.ValueText}" FontSize="15"/>
+          </StackPanel>
+        </StackPanel>
+      </StackPanel>
+      <TextBlock Text="{Binding FpsNow.Note}" FontSize="10" Foreground="{StaticResource TextDim}" TextWrapping="Wrap" MaxWidth="260" Margin="0,4,0,0">
+        <TextBlock.Style>
+          <Style TargetType="TextBlock">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding FpsNow.IsAvailable}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </TextBlock.Style>
+      </TextBlock>
+    </StackPanel>
+  </Grid>
+</UserControl>

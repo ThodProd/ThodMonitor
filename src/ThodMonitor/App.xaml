@@ -1,0 +1,37 @@
+<Application x:Class="ThodMonitor.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:ThodMonitor.Converters"
+             xmlns:vm="clr-namespace:ThodMonitor.ViewModels"
+             xmlns:v="clr-namespace:ThodMonitor.Visuals">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Themes/Dark.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
+      <BooleanToVisibilityConverter x:Key="B2V"/>
+      <conv:EqualsConverter x:Key="Eq"/>
+      <FontFamily x:Key="ValueFont">Segoe UI Variable Display, Segoe UI</FontFamily>
+      <FontWeight x:Key="ValueWeight">SemiBold</FontWeight>
+
+      <!-- мелкая строка дополнительного показателя: подпись слева, значение справа, тонкая полоса для процентов -->
+      <DataTemplate x:Key="ExtraRowTemplate" DataType="{x:Type vm:ExtraRowViewModel}">
+        <StackPanel Margin="0,2,0,0">
+          <DockPanel>
+            <TextBlock DockPanel.Dock="Right" Text="{Binding Text}" FontSize="11.5" FontWeight="{DynamicResource ValueWeight}" Foreground="{Binding Brush}" Margin="10,0,0,0"/>
+            <v:IconView Icon="{Binding Icon}" Width="12" Height="12" Stroke="{StaticResource TextDim}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBlock Text="{Binding Label}" FontSize="10" Foreground="{StaticResource TextDim}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+          </DockPanel>
+          <v:BarGauge Height="3" Margin="0,2,0,0" HorizontalAlignment="Stretch" Visibility="{Binding HasBar, Converter={StaticResource B2V}}"
+                      Value="{Binding Card.NumericValue}" IsAvailable="{Binding Card.IsAvailable}" Warn="{Binding Card.Warn}" Crit="{Binding Card.Crit}"/>
+        </StackPanel>
+      </DataTemplate>
+
+      <Style x:Key="ExtrasList" TargetType="ItemsControl">
+        <Setter Property="Margin" Value="0,8,0,0"/>
+        <Setter Property="MinWidth" Value="120"/>
+        <Style.Triggers><Trigger Property="HasItems" Value="False"><Setter Property="Visibility" Value="Collapsed"/></Trigger></Style.Triggers>
+      </Style>
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>

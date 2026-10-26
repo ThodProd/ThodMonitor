@@ -1,0 +1,94 @@
+<UserControl x:Class="ThodMonitor.Views.EdgeEditor" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:v="clr-namespace:ThodMonitor.Visuals" xmlns:views="clr-namespace:ThodMonitor.Views" Foreground="{StaticResource Text}" FontFamily="Segoe UI Variable Display, Segoe UI">
+  <Grid Margin="0,12,0,0">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="178"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="290"/>
+    </Grid.ColumnDefinitions>
+
+    <!-- Палитра -->
+    <Border Style="{StaticResource Section}" Margin="0,0,12,0" VerticalAlignment="Top">
+      <StackPanel>
+        <TextBlock Text="Добавить блок" FontWeight="SemiBold" Margin="0,0,0,8"/>
+        <Button Style="{StaticResource Btn}" Margin="0,0,0,6" HorizontalAlignment="Stretch" Content="＋  Процессор" Command="{Binding EdgeEditor.AddBlockCommand}" CommandParameter="cpu"/><Button Style="{StaticResource Btn}" Margin="0,0,0,6" HorizontalAlignment="Stretch" Content="＋  Видеокарта" Command="{Binding EdgeEditor.AddBlockCommand}" CommandParameter="gpu"/><Button Style="{StaticResource Btn}" Margin="0,0,0,6" HorizontalAlignment="Stretch" Content="＋  Оперативная память" Command="{Binding EdgeEditor.AddBlockCommand}" CommandParameter="ram"/><Button Style="{StaticResource Btn}" Margin="0,0,0,6" HorizontalAlignment="Stretch" Content="＋  Диск" Command="{Binding EdgeEditor.AddBlockCommand}" CommandParameter="disk"/><Button Style="{StaticResource Btn}" Margin="0,0,0,6" HorizontalAlignment="Stretch" Content="＋  Сеть" Command="{Binding EdgeEditor.AddBlockCommand}" CommandParameter="net"/><Button Style="{StaticResource Btn}" Margin="0,0,0,6" HorizontalAlignment="Stretch" Content="＋  FPS" Command="{Binding EdgeEditor.AddBlockCommand}" CommandParameter="fps"/><Button Style="{StaticResource Btn}" Margin="0,0,0,6" HorizontalAlignment="Stretch" Content="＋  Свой показатель" Command="{Binding EdgeEditor.AddBlockCommand}" CommandParameter="custom"/>
+        <Border Height="1" Background="{StaticResource Line}" Margin="0,6,0,10"/>
+        <Button Style="{StaticResource Btn}" HorizontalAlignment="Stretch" Content="Сбросить к стандартному" Command="{Binding EdgeEditor.ResetBlocksCommand}"/>
+      </StackPanel>
+    </Border>
+
+    <!-- Живой предпросмотр панели -->
+    <Border Grid.Column="1" Style="{StaticResource Section}" Margin="0,12,12,0" Background="#0F1116" MinHeight="380">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Dim}" TextWrapping="Wrap" Margin="0,0,0,10"
+                   Text="Так выглядит панель с живыми данными. Нажмите на блок, чтобы настроить его, перетащите мышью или кнопками ▲ ▼, чтобы поменять местами."/>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+          <Border Background="#E614161B" BorderBrush="#28FFFFFF" BorderThickness="1" CornerRadius="20" Padding="8"
+                  HorizontalAlignment="Center" VerticalAlignment="Top">
+            <ItemsControl x:Name="Preview" ItemsSource="{Binding EdgeBlocks}" AllowDrop="True"
+                          PreviewMouseLeftButtonDown="OnDown" PreviewMouseMove="OnMove" DragOver="OnDragOver" Drop="OnDrop">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border x:Name="Frame" CornerRadius="14" BorderThickness="2" BorderBrush="Transparent" Margin="2" Padding="2" Background="#01000000" Cursor="Hand">
+                    <Grid>
+                      <views:EdgeBlockView/>
+                      <StackPanel x:Name="Tools" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Collapsed">
+                        <Button Style="{StaticResource Mini}" Content="▲" ToolTip="Выше" Command="{Binding DataContext.EdgeEditor.MoveUpCommand, RelativeSource={RelativeSource AncestorType=views:EdgeEditor}}" CommandParameter="{Binding}"/><Button Style="{StaticResource Mini}" Content="▼" ToolTip="Ниже" Command="{Binding DataContext.EdgeEditor.MoveDownCommand, RelativeSource={RelativeSource AncestorType=views:EdgeEditor}}" CommandParameter="{Binding}"/><Button Style="{StaticResource Mini}" Content="✕" ToolTip="Удалить блок" Command="{Binding DataContext.EdgeEditor.RemoveBlockCommand, RelativeSource={RelativeSource AncestorType=views:EdgeEditor}}" CommandParameter="{Binding}"/>
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                  <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                      <Setter TargetName="Frame" Property="BorderBrush" Value="{StaticResource Accent}"/>
+                      <Setter TargetName="Tools" Property="Visibility" Value="Visible"/>
+                    </DataTrigger>
+                  </DataTemplate.Triggers>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Border>
+        </ScrollViewer>
+      </DockPanel>
+    </Border>
+
+    <!-- Свойства выбранного блока -->
+    <Border Grid.Column="2" Style="{StaticResource Section}" VerticalAlignment="Top">
+      <Grid>
+        <TextBlock Style="{StaticResource Dim}" TextWrapping="Wrap" Text="Выберите блок в предпросмотре слева, чтобы настроить его." Visibility="{Binding EdgeEditor.NoSelection, Converter={StaticResource B2V}}"/>
+        <StackPanel Visibility="{Binding EdgeEditor.HasSelection, Converter={StaticResource B2V}}">
+          <TextBlock Text="Блок" FontWeight="SemiBold" FontSize="15"/>
+
+          <TextBlock Text="Подпись" Style="{StaticResource Dim}" Margin="0,10,0,4"/>
+          <TextBox Text="{Binding EdgeEditor.Selected.Config.Title, UpdateSourceTrigger=PropertyChanged}"/>
+          <TextBlock Style="{StaticResource Dim}" FontSize="10.5" Text="Пусто — стандартная подпись." Margin="0,3,0,0"/>
+          <CheckBox Content="Показывать подпись" IsChecked="{Binding EdgeEditor.Selected.Config.ShowTitle}"/>
+
+          <TextBlock Text="Вид" Style="{StaticResource Dim}" Margin="0,8,0,0"/>
+          <WrapPanel Orientation="Horizontal" Margin="0,4,0,6"><RadioButton Style="{StaticResource Seg}" Margin="0,0,6,6" Padding="10,5" Content="Кольцо" IsChecked="{Binding EdgeEditor.Selected.Config.Style, Mode=TwoWay, Converter={StaticResource Eq}, ConverterParameter=Ring}"/><RadioButton Style="{StaticResource Seg}" Margin="0,0,6,6" Padding="10,5" Content="Число" IsChecked="{Binding EdgeEditor.Selected.Config.Style, Mode=TwoWay, Converter={StaticResource Eq}, ConverterParameter=Number}"/><RadioButton Style="{StaticResource Seg}" Margin="0,0,6,6" Padding="10,5" Content="Полоса" IsChecked="{Binding EdgeEditor.Selected.Config.Style, Mode=TwoWay, Converter={StaticResource Eq}, ConverterParameter=Bar}"/><RadioButton Style="{StaticResource Seg}" Margin="0,0,6,6" Padding="10,5" Content="Строка" IsChecked="{Binding EdgeEditor.Selected.Config.Style, Mode=TwoWay, Converter={StaticResource Eq}, ConverterParameter=Line}"/></WrapPanel>
+          <TextBlock Text="Размер" Style="{StaticResource Dim}"/>
+          <WrapPanel Orientation="Horizontal" Margin="0,4,0,6"><RadioButton Style="{StaticResource Seg}" Margin="0,0,6,6" Padding="10,5" Content="Малый" IsChecked="{Binding EdgeEditor.Selected.Config.Size, Mode=TwoWay, Converter={StaticResource Eq}, ConverterParameter=S}"/><RadioButton Style="{StaticResource Seg}" Margin="0,0,6,6" Padding="10,5" Content="Средний" IsChecked="{Binding EdgeEditor.Selected.Config.Size, Mode=TwoWay, Converter={StaticResource Eq}, ConverterParameter=M}"/><RadioButton Style="{StaticResource Seg}" Margin="0,0,6,6" Padding="10,5" Content="Крупный" IsChecked="{Binding EdgeEditor.Selected.Config.Size, Mode=TwoWay, Converter={StaticResource Eq}, ConverterParameter=L}"/></WrapPanel>
+
+          <TextBlock Text="Основной показатель" Style="{StaticResource Dim}" Margin="0,4,0,4"/>
+          <ListBox Height="150" ItemsSource="{Binding EdgeEditor.PrimaryOptions}" DisplayMemberPath="Label" SelectedValuePath="Id"
+                   SelectedValue="{Binding EdgeEditor.Selected.Config.Primary, Mode=TwoWay}"/>
+          <TextBlock Style="{StaticResource Dim}" FontSize="10.5" TextWrapping="Wrap" Margin="0,3,0,0"
+                     Text="Кольцо и полоса доступны для процентов и температуры, для остальных показателей будет число."/>
+
+          <TextBlock Text="Дополнительные показатели" Style="{StaticResource Dim}" Margin="0,10,0,4"/>
+          <ScrollViewer MaxHeight="190" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding EdgeEditor.ExtraOptions}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate><CheckBox Content="{Binding Label}" IsChecked="{Binding IsChecked}" Margin="0,2"/></DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+
+          <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+            <Button Style="{StaticResource Btn}" Content="▲ Выше" Command="{Binding EdgeEditor.MoveUpCommand}" CommandParameter="{Binding EdgeEditor.Selected}"/>
+            <Button Style="{StaticResource Btn}" Content="▼ Ниже" Command="{Binding EdgeEditor.MoveDownCommand}" CommandParameter="{Binding EdgeEditor.Selected}"/>
+          </StackPanel>
+          <Button Style="{StaticResource Btn}" Margin="0,8,0,0" HorizontalAlignment="Stretch" Content="Удалить блок" Command="{Binding EdgeEditor.RemoveBlockCommand}" CommandParameter="{Binding EdgeEditor.Selected}"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

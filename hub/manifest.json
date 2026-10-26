@@ -1,0 +1,1 @@
+{"schemaVersion":1,"hubApi":1,"id":"thodmonitor","version":"0.2.0","platform":"win-x64","mode":"standalone","requiresElevation":true,"launch":{"executable":"app/ThodMonitor.exe","arguments":["--thodhub-data","{dataDir}"]},"permissions":[]}
